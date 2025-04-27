@@ -1,0 +1,5 @@
+{
+  "app": {
+    "model_path": "./model/best.pt"
+  }
+}
