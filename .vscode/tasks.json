@@ -7,6 +7,14 @@
 			"problemMatcher": [],
 			"label": "npm: start",
 			"detail": "electron-forge start",
+			"group": "build"
+		},
+		{
+			"type": "npm",
+			"script": "start:prod",
+			"problemMatcher": [],
+			"label": "npm: start:prod",
+			"detail": "concurrently -k \"cd server && ../venv/bin/python app.py\" \"electron-forge start\"",
 			"group": {
 				"kind": "build",
 				"isDefault": true

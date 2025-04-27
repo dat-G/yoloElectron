@@ -38,7 +38,7 @@ function createWindow() {
   if (process.env.NODE_ENV === 'development') {
     mainWindow.loadURL('http://localhost:5173');
     // 打开开发者工具
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
   } else {
     // 生产模式加载打包文件
     mainWindow.loadFile('.vite/build/index.html')
@@ -89,9 +89,3 @@ const getResourcePath = (relativePath) => {
 const pythonPath = process.platform === 'win32'
   ? path.join(getResourcePath('venv'), 'Scripts', 'python.exe')
   : path.join(getResourcePath('venv'), 'bin', 'python');
-
-// 添加IPC处理器
-// 删除底部的重复注册（注释或删除以下代码）
-// ipcMain.handle('get-app-config', () => {
-//   return global.appConfig;
-// });

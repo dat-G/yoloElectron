@@ -6,8 +6,7 @@
             <el-button type="primary" @click="handleOpenClick">打开</el-button>
             <input ref="fileInput" type="file" hidden @change="handleFileChange">
         </el-empty>
-        <yolo-predictor v-show="showPreview" ref="predictor" :image-src="previewImage"></yolo-predictor>
-
+        <yolo-predictor v-show="showPreview" ref="predictor" :image-src="previewImage" @prediction-update="handlePredictionsUpdate"></yolo-predictor>
     </div>
     <div class="float-control-Right" v-show="showPreview">
         <el-affix position="bottom" :offset="130">
@@ -85,10 +84,16 @@ import {
 <script>
 import YoloPredictor from './YoloPredictor.vue';
 export default {
-    name: 'AppMain',
     components: {
         YoloPredictor
     },
+    props: {
+        selectedFile: {
+            type: Object,
+            default: null
+        }
+    },
+    emits: ['image-size-update', 'prediction-update'],
     data() {
         return {
             showPreview: false,
@@ -103,7 +108,17 @@ export default {
             startX: 0,
             startY: 0,
             offsetX: 0,
-            offsetY: 0
+            offsetY: 0,
+            boxCount: 0,
+        }
+    },
+    watch: {
+        // 监听selectedImage属性的变化
+        selectedFile(newFile) {
+            if (newFile) {
+                console.log('Main接收到新图片:', newFile)
+                this.simulateFileSelection(newFile)
+            }
         }
     },
     mounted() {
@@ -186,6 +201,12 @@ export default {
                     img.onload = () => {
                         this.baseWidth = img.naturalWidth;
                         this.baseHeight = img.naturalHeight;
+                        
+                        // 触发尺寸更新事件
+                        this.$emit('image-size-update', {
+                          width: this.baseWidth,
+                          height: this.baseHeight
+                        });
                         const canvas = this.$refs.previewCanvas;
                         canvas.width = img.naturalWidth;
                         canvas.height = img.naturalHeight;
@@ -227,7 +248,72 @@ export default {
                 }
             });
         },
+        handlePredictionsUpdate(count) {
+            this.boxCount = count
+            this.$emit('prediction-update', count)
+        },
+        // 新增方法：加载选中的图片
+        loadSelectedImage(imagePath) {
+            // 设置预览图片路径
+            this.previewImage = imagePath
+            // 显示预览区域
+            this.showPreview = true
+            
+            // 如果图片是blob URL，不需要加载至canvas，YoloPredictor会直接处理
+            if (imagePath.startsWith('blob:')) {
+                // 通知YoloPredictor开始处理图片
+                this.$nextTick(() => {
+                    if (this.$refs.predictor) {
+                        // 手动触发YoloPredictor的预测
+                        this.$refs.predictor.detectImage()
+                    }
+                })
+            } else {
+                // 对于其他类型的图片路径，可能需要先加载
+                const img = new Image()
+                img.onload = () => {
+                    // 图片加载完成后，通知YoloPredictor开始处理
+                    this.$nextTick(() => {
+                        if (this.$refs.predictor) {
+                            this.$refs.predictor.detectImage()
+                        }
+                    })
+                }
+                img.src = imagePath
+            }
+        },
+        simulateFileSelection(file) {
+            try {
+                console.log('正在模拟文件选择:', file.name)
+                
+                // 方法1：直接调用文件处理函数
+                this.handleFileChange({ target: { files: [file] } })
+                
+                /* 方法2：如果方法1不工作，尝试这种方式
+                // 创建一个新的 DataTransfer 对象
+                const dataTransfer = new DataTransfer()
+                // 将文件添加到 DataTransfer 对象
+                dataTransfer.items.add(file)
+                
+                // 获取文件输入框元素
+                const fileInput = this.$refs.fileInput
+                // 设置文件
+                fileInput.files = dataTransfer.files
+                
+                // 手动触发 change 事件
+                const event = new Event('change', { bubbles: true })
+                fileInput.dispatchEvent(event)
+                */
+            } catch (error) {
+                console.error('模拟文件选择失败:', error)
+            }
+        },
         
+        // 其他现有方法...
+        handlePredictionsUpdate(count) {
+            this.boxCount = count
+            this.$emit('prediction-update', count)
+        },
     }
 }
 </script>

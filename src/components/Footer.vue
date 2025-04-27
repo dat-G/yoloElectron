@@ -1,10 +1,7 @@
 <template>
   <el-row>
     <el-col :span="6">
-      <el-statistic title="Daily active users" :value="268500" />
-    </el-col>
-    <el-col :span="6">
-      <el-statistic :value="138">
+      <!-- <el-statistic :value="138">
         <template #title>
           <div style="display: inline-flex; align-items: center">
             Ratio of men to women
@@ -14,25 +11,31 @@
           </div>
         </template>
         <template #suffix>/100</template>
-      </el-statistic>
+      </el-statistic> -->
     </el-col>
     <el-col :span="6">
-      <el-statistic title="Total Transactions" :value="172000" />
+      <el-statistic title="图像尺寸" :value="imageSize" />
+      <el-icon><Picture /></el-icon>
+    </el-col>
+
+    <el-col :span="6">
+      <el-statistic title="预测框数量" :value="boxCount" />
+      <el-icon><Grid /></el-icon>
     </el-col>
     <el-col :span="6">
-      <el-statistic title="Feedback number" :value="562">
+      <!-- <el-statistic title="Feedback number" :value="562">
         <template #suffix>
           <el-icon style="vertical-align: -0.125em">
             <ChatLineRound />
           </el-icon>
-        </template>
-      </el-statistic>
+        </template> -->
+      <!-- </el-statistic> -->
     </el-col>
   </el-row>
 </template>
 
 <script setup>
-import { ChatLineRound, Male } from '@element-plus/icons-vue'
+import { Grid, Picture } from '@element-plus/icons-vue'
 </script>
 
 <style scoped>
@@ -43,6 +46,24 @@ import { ChatLineRound, Male } from '@element-plus/icons-vue'
 
 <script>
 export default {
-  name: 'AppFooter'
+  name: 'AppFooter',
+  props: {
+    imageDimensions: {
+      type: Object,
+      default: () => ({
+        width: 0,
+        height: 0,
+      }),
+    },
+    boxCount: {
+      type: Number,
+      default: 0,
+    },
+  },
+  computed: {
+    imageSize() {
+      return `${this.imageDimensions.width} × ${this.imageDimensions.height}`;
+    }
+  }
 }
 </script>
