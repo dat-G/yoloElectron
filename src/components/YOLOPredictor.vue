@@ -50,29 +50,26 @@ export default {
         },
 
         async detect(imageElement) {
-            const formData = new FormData();
-            // 添加原生数据URL转Blob方法
-            const dataURLtoBlob = (dataURL) => {
-                const arr = dataURL.split(',');
-                const mime = arr[0].match(/:(.*?);/)[1];
-                const bstr = atob(arr[1]);
-                let n = bstr.length;
-                const u8arr = new Uint8Array(n);
-                while (n--) {
-                    u8arr[n] = bstr.charCodeAt(n);
-                }
-                return new Blob([u8arr], { type: mime });
-            };
-
-            // 修正请求头设置
-            // headers: {
-            //     'Accept' : 'application/json'
-            // }
-            const blob = await fetch(this.imageSrc)
-                .then(res => res.blob());
-            formData.append('image', blob, 'image.jpg');
-
             try {
+                // 开始计时
+                const startTime = performance.now();
+                
+                // 获取图像数据
+                const canvas = document.createElement('canvas');
+                canvas.width = imageElement.width || imageElement.naturalWidth;
+                canvas.height = imageElement.height || imageElement.naturalHeight;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(imageElement, 0, 0, canvas.width, canvas.height);
+                
+                // 获取图像数据并转为 blob
+                const blob = await new Promise(resolve => {
+                    canvas.toBlob(resolve, 'image/jpeg');
+                });
+                
+                // 发送到服务器
+                const formData = new FormData();
+                formData.append('image', blob);
+                
                 const response = await fetch('/yolo-detect/predict', {
                     method: 'POST',
                     headers: {
@@ -82,10 +79,23 @@ export default {
                 });
 
                 this.predictions = await response.json();
-                console.log('原始预测数据:', this.predictions);
+                
+                // 结束计时
+                const endTime = performance.now();
+                const predictionTime = Math.round(endTime - startTime);
+                
+                console.log('预测耗时:', predictionTime, 'ms');
+                
+                // 发出预测时间事件
+                this.$emit('prediction-time', predictionTime);
+                
+                // 发出预测框数量事件
                 const boxCount = this.predictions.length;
                 this.$emit('prediction-update', boxCount);
+                
+                console.log('原始预测数据:', this.predictions);
                 console.log('预测框数量:', boxCount);
+                
                 this.drawBoxes(imageElement);
                 return this.predictions;
             } catch (error) {

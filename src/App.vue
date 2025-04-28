@@ -9,11 +9,11 @@
                     <app-header></app-header>
                 </el-header>
                 <el-main>
-                    <app-main @image-size-update="handleImageSizeUpdate" @prediction-update="handlePredictionsUpdate"
+                    <app-main @image-size-update="handleImageSizeUpdate" @prediction-update="handlePredictionsUpdate" @prediction-time="handlePredictionTime"
                         :selected-file="selectedFile"></app-main>
                 </el-main>
                 <el-footer height="auto" style="margin: 10px; padding-bottom: 10px;">
-                    <app-footer :image-dimensions="imageDimensions" :box-count="boxCount"></app-footer>
+                    <app-footer :image-dimensions="imageDimensions" :box-count="boxCount" :prediction-time="predictionTime"></app-footer>
                 </el-footer>
             </el-container>
         </el-container>
@@ -59,6 +59,7 @@ export default {
         return {
             imageDimensions: { width: 0, height: 0 },
             boxCount: 0,
+            predictionTime: 0,
         }
     },
     methods: {
@@ -68,6 +69,11 @@ export default {
         handlePredictionsUpdate(count) {
             console.log('App 接收到预测框数量：', count); // 添加调试输出
             this.boxCount = count;
+        },
+        handlePredictionTime(time) {
+            
+            this.predictionTime = time;
+            console.log('App 接收到预测时间：', this.predictionTime); // 添加调试输出
         }
     }
 };

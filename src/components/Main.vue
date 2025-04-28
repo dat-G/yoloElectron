@@ -6,7 +6,13 @@
             <el-button type="primary" @click="handleOpenClick">打开</el-button>
             <input ref="fileInput" type="file" hidden @change="handleFileChange">
         </el-empty>
-        <yolo-predictor v-show="showPreview" ref="predictor" :image-src="previewImage" @prediction-update="handlePredictionsUpdate"></yolo-predictor>
+        <yolo-predictor 
+            v-show="showPreview" 
+            ref="predictor" 
+            :image-src="previewImage" 
+            @prediction-update="handlePredictionsUpdate"
+            @prediction-time="handlePredictionTime"
+        ></yolo-predictor>
     </div>
     <div class="float-control-Right" v-show="showPreview">
         <el-affix position="bottom" :offset="130">
@@ -82,7 +88,8 @@ import {
 </script>
 
 <script>
-import YoloPredictor from './YoloPredictor.vue';
+import YoloPredictor from './YoloPredictor.vue'
+
 export default {
     components: {
         YoloPredictor
@@ -93,7 +100,7 @@ export default {
             default: null
         }
     },
-    emits: ['image-size-update', 'prediction-update'],
+    emits: ['image-size-update', 'prediction-update', 'prediction-time'],
     data() {
         return {
             showPreview: false,
@@ -309,11 +316,16 @@ export default {
             }
         },
         
-        // 其他现有方法...
-        handlePredictionsUpdate(count) {
-            this.boxCount = count
-            this.$emit('prediction-update', count)
-        },
+        // // 其他现有方法...
+        // handlePredictionsUpdate(count) {
+        //     this.boxCount = count
+        //     this.$emit('prediction-update', count)
+        // },
+        // 添加处理预测时间的方法
+        handlePredictionTime(time) {
+            console.log('Main 接收到预测时间:', time, 'ms');
+            this.$emit('prediction-time', time);
+        }
     }
 }
 </script>
