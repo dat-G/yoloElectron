@@ -38,7 +38,7 @@ function createWindow() {
   if (process.env.NODE_ENV === 'development') {
     mainWindow.loadURL('http://localhost:5173');
     // 打开开发者工具
-    // mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
   } else {
     // 生产模式加载打包文件
     mainWindow.loadFile('.vite/build/index.html')

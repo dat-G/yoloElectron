@@ -11,7 +11,7 @@
     <template #extra>
       <div class="flex items-center">
         <div class="extraControl ml-4">
-          <el-button>Print</el-button>
+          <el-button @click="showPredictions">Print</el-button>
           <el-button type="primary" class="ml-2">Edit</el-button>
         </div>
       </div>
@@ -28,6 +28,7 @@ import {
 
 <script>
 import ModelPath from './ModelPath.vue';
+import { ElMessageBox } from 'element-plus';
 
 export default {
   name: 'AppHeader',
@@ -38,6 +39,19 @@ export default {
     return {
       path: []
     };
+  },
+  props: ['predictions'],
+  methods: {
+    showPredictions() {
+      ElMessageBox.alert(
+        `<pre>${JSON.stringify(this.predictions, null, 2)}</pre>`,
+        '预测结果',
+        {
+          dangerouslyUseHTMLString: true,
+          confirmButtonText: '关闭'
+        }
+      )
+    }
   },
   async mounted() {
     try {

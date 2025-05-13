@@ -6,10 +6,10 @@
             </el-aside>
             <el-container>
                 <el-header id="appHeader">
-                    <app-header></app-header>
+                    <app-header :predictions="predictions"></app-header>
                 </el-header>
                 <el-main>
-                    <app-main @image-size-update="handleImageSizeUpdate" @prediction-update="handlePredictionsUpdate" @prediction-time="handlePredictionTime"
+                    <app-main ref="main" @image-size-update="handleImageSizeUpdate" @prediction-update="handlePredictionsUpdate" @prediction-time="handlePredictionTime"
                         :selected-file="selectedFile"></app-main>
                 </el-main>
                 <el-footer height="auto" style="margin: 10px; padding-bottom: 10px;">
@@ -60,15 +60,18 @@ export default {
             imageDimensions: { width: 0, height: 0 },
             boxCount: 0,
             predictionTime: 0,
+            predictions: [],
         }
     },
     methods: {
         handleImageSizeUpdate(dimensions) {
             this.imageDimensions = dimensions;
         },
-        handlePredictionsUpdate(count) {
-            console.log('App 接收到预测框数量：', count); // 添加调试输出
-            this.boxCount = count;
+        handlePredictionsUpdate(predictions) {
+            console.log('App 接收到预测框数量：', predictions.length); // 添加调试输出
+            this.boxCount = predictions.length;
+            this.predictions = predictions;
+            console.log('App 接收到预测框：', this.predictions); // 添加调试输出
         },
         handlePredictionTime(time) {
             

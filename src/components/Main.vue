@@ -255,9 +255,12 @@ export default {
                 }
             });
         },
-        handlePredictionsUpdate(count) {
-            this.boxCount = count
-            this.$emit('prediction-update', count)
+        handlePredictionsUpdate(predictions) {
+            console.log('Main 接收到预测结果:', predictions)
+            this.boxCount = predictions.length;
+            console.log('Main 预测框数量:', this.boxCount);
+            this.$emit('prediction-update', predictions)
+            // this.$emit('prediction-count', predictions.length)
         },
         // 新增方法：加载选中的图片
         loadSelectedImage(imagePath) {

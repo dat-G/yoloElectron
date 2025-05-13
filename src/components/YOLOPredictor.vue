@@ -77,8 +77,11 @@ export default {
                     },
                     body: formData
                 });
-
-                this.predictions = await response.json();
+                const jsonData = await response.json();
+                this.predictions = jsonData.map(pred => ({
+                    ...pred,
+                    bbox: pred.bbox.map(num => parseFloat(num.toFixed(2)))
+                }))
                 
                 // 结束计时
                 const endTime = performance.now();
@@ -91,7 +94,7 @@ export default {
                 
                 // 发出预测框数量事件
                 const boxCount = this.predictions.length;
-                this.$emit('prediction-update', boxCount);
+                this.$emit('prediction-update', this.predictions);
                 
                 console.log('原始预测数据:', this.predictions);
                 console.log('预测框数量:', boxCount);
