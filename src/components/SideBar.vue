@@ -30,7 +30,7 @@
       <el-icon><DataAnalysis /></el-icon>
       <template #title>训练分析</template>
     </el-menu-item>
-    <el-menu-item index="3" disabled>
+    <el-menu-item index="3" @click="handleAboutClick">
       <el-icon><Cpu /></el-icon>
       <template #title>关于</template>
     </el-menu-item>
@@ -54,8 +54,10 @@ import {
   ArrowLeft,
   Folder,
   DataAnalysis,
-  Cpu
+  Cpu,
+  Avatar
 } from '@element-plus/icons-vue'
+import { ElMessageBox } from 'element-plus'
 
 const isCollapse = ref(true)
 const handleOpen = () => {
@@ -63,6 +65,19 @@ const handleOpen = () => {
 }
 const handleClose = () => {
   isCollapse.value = true
+}
+
+const handleAboutClick = () => {
+  ElMessageBox({
+    title: '关于',
+    message:
+      '本项目为东北农业大学 电气与信息学院 计科2101陈曦的毕业设计。<br>' +
+      'YOLOv8模型在线预测预览的Web端部署，使用Flask作为后端提供预测服务，Vue3作为前端框架。',
+    icon: Avatar,
+    showClose: false,
+    showCancelButton: false,
+    dangerouslyUseHTMLString: true
+  })
 }
 
 const emit = defineEmits(['toggle-drawer'])
